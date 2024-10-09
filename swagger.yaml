@@ -1,0 +1,261 @@
+openapi: 3.0.0
+info:
+  title: Star Wars Table API
+  version: 1.0.0
+servers:
+  - url: https://ssvu3l1awd.execute-api.us-east-1.amazonaws.com/dev
+    description: API Gateway URL for accessing the Lambda functions
+paths:
+  /peliculas:
+    get:
+      summary: Obtener data de DynamoDB
+      description: Devuelve los ultimos 50 items de tabla en DynamoDB.
+      responses:
+        '200':
+          description: lista de datos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description:  ID de item.
+                          example: "9116e479-e9a1-405b-92f1-ebe2efb28b03"
+                        year:
+                          type: string
+                          description: Año de publicacion de pelicula
+                          example: "2002"
+                        title:
+                          type: string
+                          description: Titulo de pelicula
+                          example: "Star Wars: Episode II - Attack of the Clones"
+        '500':
+          description: Internal server error when fetching data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error fetching data
+                  error:
+                    type: string
+                    example: Description of the error encountered.
+      tags:
+        - Star Wars Peliculas
+  /planeta/{id}:
+    get:
+      summary: Obtener datos de planeta
+      description: Obtiene data de Star Wars API, con los atributos en español
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description:  ID de planeta
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Detalles del planeta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nombre:
+                    type: string
+                    description: Name of the planet (translated from "name").
+                  diametro:
+                    type: string
+                    description: Diameter of the planet (translated from "diameter").
+                  periodo_rotacion:
+                    type: string
+                    description: Rotation period of the planet (translated from "rotation_period").
+                  periodo_orbital:
+                    type: string
+                    description: Orbital period of the planet (translated from "orbital_period").
+                  gravedad:
+                    type: string
+                    description: Gravity on the planet (translated from "gravity").
+                  poblacion:
+                    type: string
+                    description: Population of the planet (translated from "population").
+                  clima:
+                    type: string
+                    description: Climate of the planet (translated from "climate").
+                  terreno:
+                    type: string
+                    description: Terrain of the planet (translated from "terrain").
+                  agua_superficie:
+                    type: string
+                    description: Percentage of surface water (translated from "surface_water").
+                  residentes:
+                    type: array
+                    items:
+                      type: string
+                    description: Residents of the planet (translated from "residents").
+                  peliculas:
+                    type: array
+                    items:
+                      type: string
+                    description: Films featuring the planet (translated from "films").
+                  creado:
+                    type: string
+                    description: Date when the data was created (translated from "created").
+                  editado:
+                    type: string
+                    description: Date when the data was last edited (translated from "edited").
+        '500':
+          description: Error fetching or processing data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error fetching data
+      tags:
+        - Star Wars Detalles
+  /insertar:
+    post:
+      summary: Guardar Peliculas de Star Wars en DynamoDB
+      description: Guardar Peliculas a tabla DynamoDB con ID, title y year.
+      requestBody:
+        description: Data en format JSON , title y year
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the Star Wars movie.
+                  example: "A New Hope"
+                year:
+                  type: integer
+                  description: The release year of the movie.
+                  example: 1977
+      responses:
+        '200':
+          description: Successfully saved data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Data saved
+                  result:
+                    type: object
+                    description: The result returned from DynamoDB.
+        '500':
+          description: Error saving data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error saving data
+                  error:
+                    type: string
+                    example: Detailed error message
+      tags:
+        - Star Wars Peliculas
+  /persona/{id}:
+    get:
+      summary: Detalles de personajes de Star Wars
+      description: Obtiene data de Star Wars API, con los atributos en español
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the character to fetch from the Star Wars API.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successfully fetched and translated character data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nombre:
+                    type: string
+                    description: Name of the character (translated from "name").
+                  altura:
+                    type: string
+                    description: Height of the character (translated from "height").
+                  masa:
+                    type: string
+                    description: Mass of the character (translated from "mass").
+                  color_cabello:
+                    type: string
+                    description: Hair color of the character (translated from "hair_color").
+                  color_piel:
+                    type: string
+                    description: Skin color of the character (translated from "skin_color").
+                  color_ojos:
+                    type: string
+                    description: Eye color of the character (translated from "eye_color").
+                  año_nacimiento:
+                    type: string
+                    description: Birth year of the character (translated from "birth_year").
+                  genero:
+                    type: string
+                    description: Gender of the character (translated from "gender").
+                  mundo_origen:
+                    type: string
+                    description: Homeworld of the character (translated from "homeworld").
+                  peliculas:
+                    type: array
+                    items:
+                      type: string
+                    description: Films the character appeared in (translated from "films").
+                  especies:
+                    type: array
+                    items:
+                      type: string
+                    description: Species of the character (translated from "species").
+                  vehiculos:
+                    type: array
+                    items:
+                      type: string
+                    description: Vehicles the character has used (translated from "vehicles").
+                  naves_espaciales:
+                    type: array
+                    items:
+                      type: string
+                    description: Starships the character has used (translated from "starships").
+                  creado:
+                    type: string
+                    description: Date when the data was created (translated from "created").
+                  editado:
+                    type: string
+                    description: Date when the data was last edited (translated from "edited").
+        '500':
+          description: Error fetching or processing data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error fetching data
+      tags:
+        - Star Wars Detalles   
