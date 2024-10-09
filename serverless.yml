@@ -1,0 +1,71 @@
+
+service: sw-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: us-east-1
+  environment:
+    STARWARS_TABLE: starwars
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: "*"
+
+resources:
+  Resources:
+    CandidatesDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "id"
+            AttributeType: "S"   
+        KeySchema:
+          -
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.STARWARS_TABLE}
+
+functions:
+ SW-insertar:
+    handler: api/insertar.submit
+    memorySize: 128
+    description: Insertar Pelicula de StarWars
+    events:
+      - http: 
+          path: insertar
+          method: post  
+ SW-persona:
+    handler: api/persona.get
+    memorySize: 128
+    description: Obtener detalles de persona
+    events:
+      - http: 
+          path: persona/{id}
+          method: get  
+ SW-planeta:
+    handler: api/planeta.get
+    memorySize: 128
+    description: Obtener detalles de planeta
+    events:
+      - http: 
+          path: planeta/{id}
+          method: get  
+ SW-peliculas:
+    handler: api/peliculas.get
+    memorySize: 128
+    description: Lista de Peliculas StarWars
+    events:
+      - http: 
+          path: peliculas
+          method: get                                
